@@ -24,6 +24,8 @@ LINK del(LINK node);
 LINK clean(void);
 LINK current(void);
 int eachdo(void *func);
+int exist(LINK node);
+void show(void);
 
 
 
@@ -37,15 +39,20 @@ int main(void) {
 	printf("after head Person_1 head is %s\n",Head->name);
 	printf("after head Person_1 end is %s\n",End->name);
 	
+
 	
 	LINK Person_2 = (PERSON*)malloc(sizeof(PERSON));
 	strcpy(Person_2->name, "Jeffson");
     //printf("%s\n",current()->name);
     
+        int exist1 = exist(Person_1);
+        int exist2 = exist(Person_2);
+
+        printf("Person1 exist return %d, Person2 exist return %d.\n", exist1, exist2);
 	LINK Person_3 = (PERSON*)malloc(sizeof(PERSON));
 	strcpy(Person_3->name, "Marilyn");
 	
-        LINK Person_4 = (PERSON*)malloc(sizeof(PERSON));
+    LINK Person_4 = (PERSON*)malloc(sizeof(PERSON));
 	strcpy(Person_4->name, "Kolfma");
 	
 	LINK Person_5 = (PERSON*)malloc(sizeof(PERSON));
@@ -56,7 +63,9 @@ int main(void) {
 	printf("after append Person_5 current is %s\n",current()->name);
 	printf("after append Person_5 Head is %s\n",Head->name);
 	printf("after append Person_5 End is %s\n",End->name);
-	
+        
+        move(Person_2);
+
 	move(Head);
 	printf("after move head current is %s\n",current()->name);
 	insert(Person_2);
@@ -75,14 +84,24 @@ int main(void) {
 		Current = Current->next;
 	}
 	
-	
+        show();	
 	clean();
 	printf("after clean current is %s\n",current()->name);
 	
 	return 0;
 }
 
-
+void show(void) {
+  move(Head);
+  int index = 0;
+  printf("\n[\n");
+  while (current() != NULL) {
+    printf("\t%d  :  %s\n", index, current()->name);
+    Current = Current->next;
+    index++;
+  }
+  printf("]\n");
+}
 
 LINK current(void) {
 	return Current;
@@ -107,6 +126,12 @@ LINK head(LINK node) {
 }
 
 LINK append(LINK node) {
+  
+        int exist_node = exist(node);
+	if (exist_node == 1) {
+		printf("The node %s already existed.\n", node->name);
+		return Current;
+	}
 	
 	if (Current == NULL) {
 		Head = node;
@@ -114,7 +139,7 @@ LINK append(LINK node) {
 		
 		LINK P;
 		P = node;
-		while ( P != NULL) {
+		while ( P->next != NULL) {
 			P = P->next;
 		}
 		End = P;
@@ -122,17 +147,24 @@ LINK append(LINK node) {
 	}
 	
 	else if (Current == End) {
-		node->next = NULL;
+		//node->next = NULL;
 		Current->next = node;
 		
 		Current = node;
-		End = node;
+		
+		LINK P;
+		P = node;
+		while ( P->next != NULL) {
+			P = P->next;
+		}
+		End = P;
+		//End = node;
 		
 		return Current;
 	}
 	
 	else {
-            node->next = Current->next;
+        node->next = Current->next;
 	    Current->next = node;
 	    Current = node;
 	
@@ -142,6 +174,11 @@ LINK append(LINK node) {
 }
 
 LINK move(LINK node) {
+
+	if (exist(node) == 0) {
+	    printf("The node %s is not exist in link list.\n", node->name);
+	    return Current;
+	}
 
 	LINK P;
 	
@@ -159,8 +196,14 @@ LINK move(LINK node) {
 }
 
 LINK insert(LINK node) {
+ 
+  
+	if (exist(node) == 1) {
+		printf("The node %s already existed.\n", node->name);
+		return Current;
+	}
 
-	LINK Prev;
+        LINK Prev;
 	LINK P;
 	
 	if ( Current == Head ) {
@@ -183,4 +226,16 @@ LINK insert(LINK node) {
 	return Current;
 }
 
+int exist(LINK node) {
+	//move(Head);
+        LINK P;
+        P = Head;
 
+	while (P != NULL) {
+		if (P == node) {
+			return 1;
+		}
+		P = P->next;
+    }
+    return 0;
+}
