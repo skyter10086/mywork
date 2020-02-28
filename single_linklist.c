@@ -20,7 +20,7 @@ LINK head(LINK node);
 LINK append(LINK node);
 LINK insert(LINK node);
 LINK move(LINK node);
-LINK del(LINK node);
+int del(LINK node);
 LINK clean(void);
 LINK current(void);
 int eachdo(void *func);
@@ -52,7 +52,7 @@ int main(void) {
 	LINK Person_3 = (PERSON*)malloc(sizeof(PERSON));
 	strcpy(Person_3->name, "Marilyn");
 	
-    LINK Person_4 = (PERSON*)malloc(sizeof(PERSON));
+        LINK Person_4 = (PERSON*)malloc(sizeof(PERSON));
 	strcpy(Person_4->name, "Kolfma");
 	
 	LINK Person_5 = (PERSON*)malloc(sizeof(PERSON));
@@ -66,8 +66,8 @@ int main(void) {
         
         move(Person_2);
 
-	move(Head);
-	printf("after move head current is %s\n",current()->name);
+	//move(Head);
+	//printf("after move head current is %s\n",current()->name);
 	insert(Person_2);
 	printf("after insert Person_2 current is %s\n",current()->name);
 	append(Person_3);
@@ -83,7 +83,8 @@ int main(void) {
 		printf("now Current is %s\n", Current->name);
 		Current = Current->next;
 	}
-	
+        del(Person_3);	
+        puts("after del(Person_3) ,show all!\n");
         show();	
 	clean();
 	printf("after clean current is %s\n",current()->name);
@@ -215,8 +216,12 @@ LINK insert(LINK node) {
 	}
 	
 	P = Head;
-	while (P != NULL) {
-		P = P->next;
+	while (P != Current) {
+	  if (P->next == Current) {
+            break;
+          }	
+          P = P->next;
+
 	}
 	Prev = P;
 	Prev->next = node;
@@ -238,4 +243,22 @@ int exist(LINK node) {
 		P = P->next;
     }
     return 0;
+}
+
+int del(LINK node) {
+  LINK N, P;
+  if (exist(node) == 0 ) {
+    return 0;
+  }
+  P = Head;
+  while ( P != node) {
+    if (P->next == node) {
+      break;
+    }
+    P = P->next ;
+  }
+  N = node->next;
+  P->next = N;
+  
+  return 1;
 }
